@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f6f4ee" />
+  <title>我的生活助手 · 私人生活仪表盘</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">◒</span><div><strong>我的生活助手</strong><small>记录生活 · 规划未来</small></div></div>
+      <nav class="nav-list" aria-label="主导航">
+        <button class="nav-item active" data-page="home"><span>⌂</span>首页</button>
+        <button class="nav-item" data-page="finance"><span>◌</span>我的财务</button>
+        <button class="nav-item" data-page="goals"><span>☆</span>我的目标</button>
+        <button class="nav-item" data-page="travel"><span>✈</span>我的旅行</button>
+        <button class="nav-item" data-page="learning"><span>▤</span>我的学习</button>
+        <button class="nav-item" data-page="interests"><span>♧</span>我的兴趣</button>
+        <button class="nav-item" data-page="future"><span>⌂</span>我的未来</button>
+        <button class="nav-item" data-page="journal"><span>▣</span>我的记录</button>
+        <button class="nav-item" data-page="collection"><span>♡</span>我的收藏</button>
+      </nav>
+      <div class="sidebar-note"><p>生活不需要每一步都完美，重要的是你在朝着想要的方向走。</p><span>— 给未来的自己</span></div>
+      <div class="sidebar-plant" aria-hidden="true"><span class="leaf leaf-a"></span><span class="leaf leaf-b"></span><span class="pot"></span></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" aria-label="打开菜单">☰</button>
+        <div class="crumb">私人空间 <span>/</span> <b id="pageLabel">首页</b></div>
+        <div class="top-actions"><button class="icon-button" aria-label="搜索">⌕</button><button class="avatar">M</button></div>
+      </header>
+
+      <div id="app"></div>
+    </main>
+  </div>
+  <div class="toast" id="toast">已保存</div>
+  <script src="app.js"></script>
+</body>
+</html>

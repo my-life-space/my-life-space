@@ -1,0 +1,26 @@
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local tooling and deployment metadata
+.openai/
+.agents/
+.codex/
+
+# Local/generated workspace content
+outputs/
+work/
+node_modules/
+dist/
+build/
+coverage/
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
