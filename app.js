@@ -217,7 +217,15 @@ home = function(){const allTasks=tasks;visibleTaskIndexes=allTasks.map((task,ind
 home();
 showHabitLog = function(habit,day){const log=document.querySelector('#habitLog');if(!log)return;const done=habit.days[day],time=habit.times?.[day]||'21:35';log.innerHTML=`<h2>7月${day+1}日</h2><p>${done?`完成：${escapeHTML(habit.target)}<br>时间：${time}`:'当天尚未完成打卡。'}</p>`};
 const finalHomeWrapper = home;
-home = function(){finalHomeWrapper();const add=document.querySelector('#addTask');if(add)add.onclick=()=>taskModal(null,TODAY_PLAN_DATE);};
+function decorateReferenceHomepage(){
+  const page=document.querySelector('.page');
+  if(!page||!page.querySelector('.hero'))return;
+  page.classList.add('reference-home');
+  page.querySelector('.hero')?.setAttribute('data-scene','fuji-lake');
+  page.querySelector('.middle-grid')?.setAttribute('data-layout','core-cards');
+  page.querySelector('.travel-grid')?.setAttribute('data-layout','postcards');
+}
+home = function(){finalHomeWrapper();const add=document.querySelector('#addTask');if(add)add.onclick=()=>taskModal(null,TODAY_PLAN_DATE);decorateReferenceHomepage();};
 home();
 let expenseRecords = JSON.parse(localStorage.getItem('life-assistant-expenses') || 'null') || [];
 const expenseCategories = ['家庭支持','房租','日常生活','学习投资','旅行基金','娱乐'];
