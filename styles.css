@@ -208,3 +208,37 @@ body:has(.page > .hero) .travel-info h3{color:#294967}
   body:has(.page > .hero) .travel-card{min-height:112px}
   body:has(.page > .hero) .travel-visual{min-height:112px}
 }
+
+/* Real image layer for the homepage art direction. */
+body:has(.page > .hero) .hero{
+  background-image:
+    linear-gradient(90deg,rgba(232,246,255,.94) 0%,rgba(232,246,255,.72) 34%,rgba(232,246,255,.1) 76%),
+    linear-gradient(0deg,rgba(218,239,253,.9),transparent 56%),
+    url("public/home-hero-fuji.png");
+  background-position:center;
+  background-size:cover;
+}
+body:has(.page > .hero) .travel-visual{
+  background-image:url("public/travel-qinghai.png");
+  background-size:cover;
+  background-position:center;
+}
+body:has(.page > .hero) .travel-visual.yunnan{
+  background-image:url("public/travel-dali.png");
+  background-size:cover;
+  background-position:center;
+}
+body:has(.page > .hero) .travel-visual:before{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(39,92,137,.18))}
+body:has(.page > .hero) .travel-card:after,
+body:has(.page > .hero) .card:after,
+body:has(.page > .hero) .year-card:after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.44),inset 0 0 22px rgba(255,255,255,.16);
+}
+body:has(.page > .hero) .card,
+body:has(.page > .hero) .year-card{position:relative}
+body:has(.page > .hero) .travel-card{position:relative}
