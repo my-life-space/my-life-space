@@ -99,6 +99,54 @@ modulePage = function(key){ baseModulePage(key); if(key==='finance') mountFinanc
 renderNav();
 
 showExpenseDetail=function(){previousShowExpenseDetailForRecycle();document.querySelectorAll('.editable-expense-row').forEach(row=>{if(row.querySelector('.expense-trash-button'))return;const button=document.createElement('button');button.type='button';button.className='expense-trash-button';button.textContent='🗑';button.dataset.expenseIndex=row.querySelector('[data-expense-index]')?.dataset.expenseIndex;button.setAttribute('aria-label','移入回收站');row.appendChild(button)})};
+
+/* Scene homepage: a clean render path that does not reuse the legacy dashboard DOM. */
+function sceneYearData(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const year=today.getFullYear(),start=new Date(year,0,1),next=new Date(year+1,0,1);
+  const total=Math.round((next-start)/86400000),days=Math.max(0,Math.ceil((next-today)/86400000));
+  return {year,days,percent:Math.round(days/total*100)};
+}
+function sceneTaskRows(indexes){
+  if(!indexes.length)return '<div class="scene-empty">今天还没有计划，留一点时间给自己吧。</div>';
+  return indexes.slice(0,5).map(index=>{const task=tasks[index];return `<div class="scene-task-row ${task.done?'done':''}"><button class="scene-check ${task.done?'done':''}" data-scene-task="${index}" aria-label="${task.done?'取消完成':'完成'}">${task.done?'✓':''}</button><button class="scene-task-name" data-scene-edit-task="${index}">${escapeHTML(task.text)}</button><span>${escapeHTML(task.time||'生活')}</span></div>`}).join('');
+}
+function sceneHabitRows(){
+  if(!habitState.length)return '<div class="scene-empty">还没有习惯，添加一个想坚持的小目标吧。</div>';
+  return habitState.slice(0,2).map((habit,index)=>{const done=habit.days.filter(Boolean).length,percent=Math.round(done/31*100),streak=habitStreak(habit.days);return `<article class="scene-habit" data-scene-habit="${index}"><div class="scene-habit-icon">${index===0?'▣':'♬'}</div><div class="scene-habit-body"><div class="scene-habit-head"><div><h3>${escapeHTML(habit.name)}</h3><p>目标：${escapeHTML(habit.target)}</p></div><button class="scene-habit-more" data-scene-habit-menu="${index}">⋮</button></div><div class="scene-habit-meta"><span>完成 <b>${done}/31天</b></span><span>连续 <b>${streak}天</b></span></div><div class="scene-progress"><i style="width:${percent}%"></i></div><button class="scene-habit-view" data-scene-habit-view="${index}">${percent}%　查看详情 →</button></div></article>`}).join('');
+}
+function sceneTravelCards(){
+  return travelPlaces.slice(0,2).map((place,index)=>{const image=place.image?`style="background-image:url('${escapeHTML(place.image)}')"`:'';return `<article class="scene-postcard"><div class="scene-postcard-image scene-postcard-${index}" ${image}></div><div class="scene-postcard-copy"><div class="scene-postcard-title"><h3>⌖ ${escapeHTML(place.name)}</h3><span>♡</span></div><b class="scene-status ${index===1?'warm':''}">${escapeHTML(place.status||'想去')}</b><p>预算：¥${numberValue(place.budget).toFixed(0)}</p><p>计划时间：${escapeHTML(place.year||'未设置')}</p><small>${escapeHTML(place.note||'把想去的地方，慢慢走成回忆。')}</small><div class="scene-postmark">${index===0?'QINGHAI LAKE':'DALI · YUNNAN'}</div></div></article>`}).join('');
+}
+function renderSceneHomepage(){
+  syncExpenseTotals();
+  const year=sceneYearData();
+  const taskIndexes=tasks.map((task,index)=>index).filter(index=>taskDateValue(index)===TODAY_PLAN_DATE);
+  const doneCount=taskIndexes.filter(index=>tasks[index].done).length;
+  shell('首页',`<main class="scene-home">
+    <section class="scene-hero">
+      <div class="scene-hero-copy"><p>上午好，愿你拥有美好的一天 ☀️</p><h1>今天也要慢慢变好</h1><span>慢慢来，也很好。今天也为想要的生活，留一点时间。</span></div>
+      <aside class="scene-year-card year-card"><div class="label"><span>${year.year} 年剩余时间</span><b>${year.percent}%</b></div><strong>还有 ${year.days} 天</strong><div class="year-progress"><i style="width:${year.percent}%"></i></div><small>一步一步，走成自己的节奏</small><div class="scene-mountain-line">⌁　⌁⌁　⌁</div></aside>
+    </section>
+    <section class="scene-core-grid">
+      <article class="scene-glass-card scene-plan-card"><header><h2>今日计划</h2><span>${doneCount} / ${taskIndexes.length} 已完成</span><button id="sceneAllTasks">查看全部 →</button></header><div class="scene-task-list">${sceneTaskRows(taskIndexes)}</div><button class="scene-add" id="sceneAddTask">＋ 添加一项计划</button></article>
+      <article class="scene-glass-card scene-expense-card"><header><h2>本月支出分类</h2><button id="sceneExpenseDetail">查看详情 →</button></header><div class="scene-expense-content">${expenseChartMarkup()}</div></article>
+      <article class="scene-glass-card scene-habits-card"><header><h2>习惯打卡</h2><button id="sceneAddHabit">＋ 添加习惯</button></header><div class="scene-habit-list">${sceneHabitRows()}</div></article>
+    </section>
+    <section class="scene-travel"><header><h2>▣　我想去的地方</h2><button id="sceneTravelPage">查看地图　›</button></header><div class="scene-postcard-grid">${sceneTravelCards()}</div></section>
+  </main>`);
+  const page=document.querySelector('.page');if(page)page.className='page scene-page';
+  document.querySelector('#sceneAddTask').onclick=()=>taskModal(null,TODAY_PLAN_DATE);
+  document.querySelector('#sceneAllTasks').onclick=()=>showTaskDetail(TODAY_PLAN_DATE);
+  document.querySelectorAll('[data-scene-task]').forEach(button=>button.onclick=()=>{const index=Number(button.dataset.sceneTask);tasks[index].done=!tasks[index].done;tasks[index].completedAt=tasks[index].done?new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}):null;saveTasks();home()});
+  document.querySelectorAll('[data-scene-edit-task]').forEach(button=>button.onclick=()=>taskModal(Number(button.dataset.sceneEditTask),TODAY_PLAN_DATE));
+  document.querySelector('#sceneExpenseDetail').onclick=showExpenseDetail;
+  document.querySelector('#sceneAddHabit').onclick=habitModal;
+  document.querySelectorAll('[data-scene-habit-view]').forEach(button=>button.onclick=event=>{event.stopPropagation();showHabitDetail(Number(button.dataset.sceneHabitView))});
+  document.querySelectorAll('[data-scene-habit]').forEach(card=>card.onclick=event=>{if(!event.target.closest('button'))showHabitDetail(Number(card.dataset.sceneHabit))});
+  document.querySelectorAll('[data-scene-habit-menu]').forEach(button=>button.onclick=event=>{event.stopPropagation();const index=Number(button.dataset.sceneHabitMenu),habit=habitState[index],name=prompt('修改习惯名称',habit.name);if(name?.trim()){habit.name=name.trim();saveHabits();home();toast('习惯已保存')}});
+  document.querySelector('#sceneTravelPage').onclick=()=>navigate('travel');
+}
 document.addEventListener('click',event=>{const button=event.target.closest('.expense-trash-button');if(!button)return;event.preventDefault();event.stopImmediatePropagation();if(!confirm('确定将这条内容移入回收站吗？'))return;const index=Number(button.dataset.expenseIndex),data=expenseRecords[index];moveToRecycle('finance','本月支出',`${data?.category||'支出'} ¥${numberValue(data?.amount).toFixed(2)}`,{key:'expense-record',index,data});expenseRecords.splice(index,1);saveExpenses();syncExpenseTotals();showExpenseDetail();toast('已移入回收站')},true);
 const baseNavigate = navigate;
 navigate = function(page){ currentPage=page; baseNavigate(page); };
@@ -569,3 +617,7 @@ const previousNavigateForRecycle=navigate;navigate=function(page){previousNaviga
 renderNav();
 const previousShowExpenseDetailForRecycle=showExpenseDetail;
 showExpenseDetail=function(){previousShowExpenseDetailForRecycle();document.querySelectorAll('.editable-expense-row').forEach(row=>{if(row.querySelector('.expense-trash-button'))return;const button=document.createElement('button');button.type='button';button.className='expense-trash-button';button.textContent='🗑';button.dataset.expenseIndex=row.querySelector('[data-expense-index]')?.dataset.expenseIndex;button.setAttribute('aria-label','移入回收站');row.appendChild(button)})};
+
+/* Activate the independent homepage only after every data module is initialized. */
+home=renderSceneHomepage;
+home();
