@@ -385,6 +385,8 @@ body:has(.scene-home) .page.scene-page{max-width:none;padding:0;background:#eaf6
     width:228px;
     flex:0 0 228px;
   }
+  body:has(.scene-home) .nav-item .nav-label{font-size:22px}
+  body:has(.scene-home) .nav-item > span:first-child{font-size:22px}
   body:has(.scene-home) .main-content{
     width:calc(100% - 242px);
   }
@@ -394,14 +396,17 @@ body:has(.scene-home) .page.scene-page{max-width:none;padding:0;background:#eaf6
     background-position:center 47%;
   }
   .scene-hero-copy{max-width:760px}
-  .scene-hero-copy p{font-size:18px}
-  .scene-hero-copy h1{font-size:clamp(55px,4vw,76px)}
-  .scene-hero-copy span{font-size:17px}
+  .scene-hero-copy p{font-size:22px}
+  .scene-hero-copy h1{font-size:clamp(68px,5vw,94px)}
+  .scene-hero-copy span{font-size:20px;line-height:1.75}
   .scene-year-card{
     width:308px;
     min-height:218px;
     padding:30px 29px 22px;
   }
+  .scene-year-card .label{font-size:14px}
+  .scene-year-card strong{font-size:36px}
+  .scene-year-card small{font-size:13px}
   .scene-core-grid,
   .scene-travel{
     width:min(1640px,calc(100% - 24px));
@@ -417,13 +422,28 @@ body:has(.scene-home) .page.scene-page{max-width:none;padding:0;background:#eaf6
     padding:31px 32px;
   }
   .scene-glass-card > header{margin-bottom:23px}
-  .scene-glass-card h2,.scene-travel h2{font-size:22px}
+  .scene-glass-card h2,.scene-travel h2{font-size:26px}
+  .scene-glass-card header span{font-size:13px}
+  .scene-glass-card header button,.scene-travel header button{font-size:14px}
   .scene-task-list{min-height:282px}
   .scene-task-row{min-height:57px}
+  .scene-task-name{font-size:16px}
+  .scene-task-row > span{font-size:13px}
+  .scene-add{font-size:15px}
+  .scene-empty{font-size:15px}
   .scene-expense-card .scene-expense-content{min-height:326px}
   .scene-expense-card .real-expense-donut{width:190px;height:190px}
+  .scene-expense-card .real-expense-donut b{font-size:15px}
+  .scene-expense-card .real-expense-donut span{font-size:12px}
+  .scene-expense-card .legend-row{font-size:13px}
+  .scene-expense-card .empty-expense{font-size:13px}
+  .scene-expense-card .empty-expense strong{font-size:16px}
   .scene-habit-list{gap:14px}
   .scene-habit{padding:17px 18px}
+  .scene-habit-head h3{font-size:17px}
+  .scene-habit-head p{font-size:12px;line-height:1.55}
+  .scene-habit-meta{font-size:12px}
+  .scene-habit-view{font-size:12px}
   .scene-postcard-grid{gap:26px}
   .scene-postcard{
     grid-template-columns:minmax(0,1.52fr) minmax(220px,.9fr);
@@ -431,8 +451,11 @@ body:has(.scene-home) .page.scene-page{max-width:none;padding:0;background:#eaf6
   }
   .scene-postcard-image{min-height:316px}
   .scene-postcard-copy{padding:32px 27px 22px}
-  .scene-postcard-title h3{font-size:21px}
-  .scene-postcard-copy p{font-size:13px}
+  .scene-postcard-title h3{font-size:25px}
+  .scene-status{font-size:13px}
+  .scene-postcard-copy p{font-size:15px}
+  .scene-postcard-copy small{font-size:12px;line-height:1.6}
+  .scene-postmark{font-size:11px}
 }
 
 @media (min-width:1600px){
