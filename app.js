@@ -35,7 +35,33 @@ function bindEditableFields(){
 function renderNav(){
   const nav = document.querySelector('.nav-list');
   nav.innerHTML = navConfig.map(item=>`<div class="nav-item ${currentPage===item.id?'active':''}" data-page="${item.id}"><span>${item.icon}</span><span class="nav-label">${navNames[item.id] || pages[item.id]}</span><span class="nav-tools"><button class="nav-more" data-nav-menu="${item.id}" aria-label="${navNames[item.id] || pages[item.id]}设置">•••</button></span></div>`).join('');
-  nav.querySelectorAll('.nav-item').forEach(item=>item.addEventListener('click',event=>{if(!event.target.closest('.nav-more')) navigate(item.dataset.page)}));
+  let lastTouchNavigation=0;
+  nav.querySelectorAll('.nav-item').forEach(item=>{
+    const openPage=()=>navigate(item.dataset.page);
+    let touchStart=null;
+    item.addEventListener('touchstart',event=>{
+      const touch=event.touches[0];
+      touchStart=touch?{x:touch.clientX,y:touch.clientY,moved:false}:null;
+    },{passive:true});
+    item.addEventListener('touchmove',event=>{
+      if(!touchStart)return;
+      const touch=event.touches[0];
+      if(touch && (Math.abs(touch.clientX-touchStart.x)>10 || Math.abs(touch.clientY-touchStart.y)>10))touchStart.moved=true;
+    },{passive:true});
+    item.addEventListener('touchend',event=>{
+      if(window.innerWidth>520 || !touchStart || touchStart.moved || event.target.closest('.nav-more')){touchStart=null;return}
+      touchStart=null;
+      lastTouchNavigation=Date.now();
+      event.preventDefault();
+      event.stopPropagation();
+      openPage();
+    },{passive:false});
+    item.addEventListener('touchcancel',()=>{touchStart=null},{passive:true});
+    item.addEventListener('click',event=>{
+      if(event.target.closest('.nav-more') || Date.now()-lastTouchNavigation<700)return;
+      openPage();
+    });
+  });
   nav.querySelectorAll('.nav-more').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation(); openNavMenu(button.dataset.navMenu, button)}));
 }
 function openNavMenu(id, anchor){
